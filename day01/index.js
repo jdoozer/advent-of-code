@@ -2,9 +2,9 @@ const loadInput = require('../loadInput');
 
 const day = '01';
 const test = (process.argv[2] === 'test');
+const input = loadInput({ day, test });
 
 const target = 2020;
-const input = loadInput({ day, test });
 
 input.sort((a, b) => a - b);
 
@@ -34,18 +34,16 @@ while (lowInd < midInd) {
     if (currSum === target) {
         console.log(input[lowInd] * input[midInd] * input[highInd]);
         break;
-    } else {
-        if (highInd === input.length - 1) {
-            if (midInd === input.length - 2) {
-                lowInd++;
-                midInd = lowInd + 1;
-                highInd = midInd + 1;
-            } else {
-                midInd++;
-                highInd = midInd + 1;
-            }
+    } else if (currSum > target || highInd === input.length - 1) {
+        if (midInd === input.length - 2) {
+            lowInd++;
+            midInd = lowInd + 1;
+            highInd = midInd + 1;
         } else {
-            highInd++;
+            midInd++;
+            highInd = midInd + 1;
         }
+    } else {
+        highInd++;
     }
 }

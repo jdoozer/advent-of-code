@@ -1,11 +1,12 @@
 const fs = require('fs');
 const path = require('path');
 
-const loadInput = ({ day, test=false }) => {
+const loadInput = ({ day, number=true, test=false }) => {
   const file = path.resolve(`day${day}/${test ? 'test_' : ''}input.txt`);
 
   const input = fs.readFileSync(file, 'utf8');
-  return input.trim().split('\n').map(num => parseInt(num));
+  const inputStringArray = input.trim().split('\n');
+  return number ? inputStringArray.map(num => parseInt(num)) : inputStringArray;
 }
 
 module.exports = loadInput;
