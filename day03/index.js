@@ -7,29 +7,27 @@ const input = loadInput({ test });
 
 // START CODE FOR DAY'S PUZZLES HERE
 
-// Part 1
-const startCoords = { x: 0, y: 0 };
-const tree = '#';
+const getTreeCount = (inputData, slope, width, tree) => {
+    let { x, y } = { x: 0, y: 0 };
+    let treeCount = 0;
 
+    while (y < inputData.length) {
+        if (inputData[y].charAt(x % width) === tree) {
+            treeCount++;
+        }
+        x = x + slope.x;
+        y = y + slope.y;
+    }
+    return treeCount;
+};
+
+const tree = '#';
+const width = input[0].length;
 const slope = { x: 3, y: 1 };
 
-const xBase = input[0].length;
+console.log('Part 1:')
+console.log(getTreeCount(input, slope, width, tree));
 
-let { x, y } = startCoords;
-let treeCount = 0;
-
-while (y < input.length) {
-    if (input[y].charAt(x % xBase) === tree) {
-        treeCount++;
-    }
-    x = x + slope.x;
-    y = y + slope.y;
-}
-
-console.log(treeCount);
-
-
-// Part 2
 const slopes = [
     { x: 1, y: 1 },
     { x: 3, y: 1 },
@@ -38,21 +36,7 @@ const slopes = [
     { x: 1, y: 2 },
 ];
 
-let treeCountProduct = 1;
+const treeCountProduct = slopes.reduce((product, slope) => product * getTreeCount(input, slope, width, tree), 1);
 
-slopes.forEach(slope => {
-    x = startCoords.x;
-    y = startCoords.y;
-    treeCount = 0;
-
-    while (y < input.length) {
-        if (input[y].charAt(x % xBase) === tree) {
-            treeCount++;
-        }
-        x = x + slope.x;
-        y = y + slope.y;
-    }
-    treeCountProduct = treeCountProduct * treeCount;
-});ß
-
+console.log('Part 2:')
 console.log(treeCountProduct);
