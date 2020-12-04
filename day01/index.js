@@ -1,8 +1,7 @@
-const loadInput = require('../loadInput');
+const loadInput = require('../lib/loadInput');
 
-const day = '01';
 const test = (process.argv[2] === 'test');
-const input = loadInput({ day, test });
+const input = loadInput({ test, number: true });
 
 const target = 2020;
 

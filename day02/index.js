@@ -1,9 +1,7 @@
-const loadInput = require('../loadInput');
+const loadInput = require('../lib/loadInput');
 
-const day = '02';
 const test = (process.argv[2] === 'test');
-
-const input = loadInput({ day, test, number: false });
+const input = loadInput({ test });
 
 const regex = /(\d+)-(\d+) (\w+): (\w+)/;
 
