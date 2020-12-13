@@ -18,8 +18,8 @@ const initialLayout = layoutStrings.map(str => {
 
 const printLayout = (layout) => layout.map(row => {
     let rowStr = row.join('x');
-    if (rowStr.charAt(rowStr.length - 1) === 'x') rowStr = rowStr.padEnd(rowStr.length + 1, 'x');
-    if (rowStr.charAt(0) === 'x') rowStr = rowStr.padStart(rowStr.length + 1, 'x');
+    if (rowStr.charAt(rowStr.length - 1) === 'x') rowStr += 'x';
+    if (rowStr.charAt(0) === 'x') rowStr = 'x' + rowStr;
 
     return (
         rowStr.replace(/1/g, '#')
@@ -58,10 +58,11 @@ const calcNextStep = (layout) => {
 };
 
 
-let layout = initialLayout.map(row => [...row]);
+let layout = initialLayout;
 let nextLayout = calcNextStep(layout);
 
 while (!areLayoutsEqual(layout, nextLayout)) {
+    if (test) console.log(printLayout(nextLayout));
     layout = nextLayout;
     nextLayout = calcNextStep(layout);
 }
@@ -98,11 +99,11 @@ const calcNextStepAdjusted = (layout) => {
     }));
 };
 
-layout = initialLayout.map(row => [...row]);
+layout = initialLayout;
 nextLayout = calcNextStepAdjusted(layout);
 
 while (!areLayoutsEqual(layout, nextLayout)) {
-    // console.log(printLayout(nextLayout))
+    if (test) console.log(printLayout(nextLayout));
     layout = nextLayout;
     nextLayout = calcNextStepAdjusted(layout);
 }
