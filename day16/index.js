@@ -62,7 +62,7 @@ const validTickets = nearbyTickets.filter(isValidTicket);
 const allFields = Object.keys(fieldRanges);
 
 // initialize array of sets of potentially valid fields for each position in the ticket
-const allPossibleFields = validTickets[0].map((_, index) => ({ fields: new Set(allFields), index }));
+const allFieldsWithIndex = validTickets[0].map((_, index) => ({ fields: new Set(allFields), index }));
 
 const validFieldsWithIndex = validTickets.reduce((fieldsWithIndex, ticket) => {
     ticket.forEach((value, pos) => {
@@ -74,7 +74,7 @@ const validFieldsWithIndex = validTickets.reduce((fieldsWithIndex, ticket) => {
         });
     });
     return fieldsWithIndex;
-}, allPossibleFields);
+}, allFieldsWithIndex);
 
 validFieldsWithIndex.sort((a, b) => a.fields.size - b.fields.size);
 
