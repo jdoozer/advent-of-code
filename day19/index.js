@@ -29,9 +29,9 @@ const getMatchesForRule = (ruleId) => {
 
 const getMatchingMsgCount = (matchFn) => messages.reduce((sum, msg) => sum + (matchFn(msg) ? 1 : 0), 0);
 
+
 // PART 1
 const matchRegEx = new RegExp(`^${getMatchesForRule(0)}$`);
-// console.log(matchRegEx);
 console.log(getMatchingMsgCount((msg) => matchRegEx.test(msg)));
 
 
