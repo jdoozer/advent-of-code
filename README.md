@@ -1,11 +1,11 @@
-# Advent of Code 2020
+# Advent of Code
 
 To run from command line, run
 ```
-$ node dayXX
+$ node {year}/day{XX}
 ```
 
 To use test input instead of the real input, run
 ```
-$ node dayXX test
+$ node {year}/day{XX} test
 ```
