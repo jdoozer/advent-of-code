@@ -3,6 +3,7 @@ const printMatrix = require('../../lib/printMatrix');
 
 const test = (process.argv[2] === 'test');
 const input = loadInput({ test });
+// const input = loadInput({ test, filename: 'input_andy.txt' });
 
 const numsort = (a, b) => a - b;
 
