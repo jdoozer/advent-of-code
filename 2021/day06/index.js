@@ -22,14 +22,10 @@ input.forEach(fishTimer => fishCounts[fishTimer] += 1);
 
 // helper to increment timers on a day
 const updateCounts = (startingCounts) => startingCounts.map((_, index) => {
-    switch (index) {
-        case MAX_TIMER:
-            return startingCounts[0];
-        case RESET_VAL:
-            return startingCounts[index + 1] + startingCounts[0];
-        default:
-            return startingCounts[index + 1];
+    if (index === MAX_TIMER) {
+        return startingCounts[0];
     }
+    return startingCounts[index + 1] + (index === RESET_VAL) ? startingCounts[0] : 0;
 });
 
 // update for some stretch of days
