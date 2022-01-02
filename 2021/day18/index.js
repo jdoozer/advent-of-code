@@ -1,12 +1,13 @@
 const loadInput = require('../../lib/loadInput');
 
 const test = (process.argv[2] === 'test');
+let testInput;
 
-// const testInput = ['[[[[9,8],1],2],3]', '4'];
-// const testInput = ['7', '[6,[5,[4,[3,2]]]]'];
-// const testInput = ['[[[[0,7],4],[15,[0,13]]],[1,1]]'];
-// const testInput = ['[[[[4,3],4],4],[7,[[8,4],9]]]','[1,1]'];
-// const testInput = [
+// testInput = ['[[[[9,8],1],2],3]', '4'];
+// testInput = ['7', '[6,[5,[4,[3,2]]]]'];
+// testInput = ['[[[[0,7],4],[15,[0,13]]],[1,1]]'];
+// testInput = ['[[[[4,3],4],4],[7,[[8,4],9]]]','[1,1]'];
+// testInput = [
 //   '[1,1]',
 //   '[2,2]',
 //   '[3,3]',
@@ -15,7 +16,6 @@ const test = (process.argv[2] === 'test');
 //   '[6,6]',
 // ];
 
-const testInput = null;
 const input = (test && testInput) ? testInput : loadInput({ test });
 
 // helper functions
