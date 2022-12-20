@@ -4,51 +4,118 @@ const printMatrix = require('../../lib/printMatrix');
 const test = (process.argv[2] === 'test');
 const input = loadInput({ test, delimiter: '\n' });
 
-const uniqueRockPaths = [...new Set(input)];
+const makeSegmentStr = (dim, range, direction) => `${dim}-${direction}-${range.sort((a, b) => a-b).toString()}`;
+const decodeSegmentStr = (str) => {
+    const [dim, direction, range] = str.split('-');
+    const rangeArr = range.split(',').map(rangeStr => +rangeStr);
+    if (direction === 'H') {
+        return { x: rangeArr, y: +dim };
+    } else if (direction === 'V') {
+        return { x: +dim, y: rangeArr };
+    } else {
+        throw new Error('invalid direction in segment string');
+    }
+};
+const makeArray = (size, fill='.') => new Array(size).fill(fill);
 
-const allSegments = uniqueRockPaths.reduce((segments, path) => {
+const segments = new Set();
+let xMin = Infinity;
+let yMin = Infinity;
+let xMax = 0;
+let yMax = 0;
+
+const uniqueRockPaths = [...new Set(input)];
+uniqueRockPaths.forEach((path) => {
     const points = path.split(' -> ').map((point) => point.split(',').map((str) => +str));
-    points.forEach((point, i) => {
+    points.forEach(([x, y], i) => {
+        xMin = Math.min(xMin, x);
+        xMax = Math.max(xMax, x);
+        yMin = Math.min(yMin, y);
+        yMax = Math.max(yMax, y);
         if (i > 0) {
-            segments.push([point, points[i-1]]);
+            const [x0, y0] = points[i-1];
+            if (x0 === x) {
+                segments.add(makeSegmentStr(x, [y0, y], 'V'));
+            } else if (y0 === y) {
+                segments.add(makeSegmentStr(y, [x0, x], 'H'));
+            } else {
+                throw new Error('segments must be horizontal or vertical')
+            }
         }
     });
-    return segments;
-}, []);
+});
 
-const { xMin, yMin, xMax, yMax } = allSegments.reduce((range, [[x1, y1], [x2, y2]]) => {
-    range.xMin = Math.min(range.xMin, x1, x2);
-    range.yMin = Math.min(range.yMin, y1, y2);
-    range.xMax = Math.max(range.xMax, x1, x2);
-    range.yMax = Math.max(range.yMax, y1, y2);
-    return range;
-}, { xMin: Infinity, yMin: Infinity, xMax: 0, yMax: 0 });
-
-const scan = new Array(yMax+1).fill().map(_ => new Array(xMax-xMin+1).fill().map(_ => '.'));
-allSegments.forEach((segment, i) => {
-    const [[x1, y1], [x2, y2]] = segment;
-    if (y1 === y2) {
-        const xRange = [x1, x2].sort();
-        for (let x = xRange[0]; x <= xRange[1]; x++) {
-            scan[y1][x - xMin] = '#';
+const scan = new Array(yMax+1).fill().map(_ => makeArray(xMax-xMin+1));
+[...segments].forEach((segmentStr) => {
+    const { x, y } = decodeSegmentStr(segmentStr);
+    if (Array.isArray(x)) {
+        for (let xCurr = x[0]; xCurr <= x[1]; xCurr++) {
+            scan[y][xCurr - xMin] = '#';
         }
-    } else if (x1 === x2) {
-        const yRange = [y1, y2].sort();
-        for (let y = yRange[0]; y <= yRange[1]; y++) {
-            scan[y][x1 - xMin] = '#';
+    } else if (Array.isArray(y)) {
+        for (let yCurr = y[0]; yCurr <= y[1]; yCurr++) {
+            scan[yCurr][x - xMin] = '#';
         }
-    } else {
-        console.dir({ xMin, yMin, xMax, yMax })
-        throw new Error('segments must be horizontal or vertical')
     }
 });
 
-// printMatrix(scan, { delimiter: ''})
-
-const sandSourceX = 500 - xMin;
-const dropSand = (state) => {
-    let xSand = sandSourceX;
+const dropSand1 = (state) => {
+    let xSand = 500 - xMin;
     let ySand = 0;
+
+    while (true) {
+        if (ySand >= yMax) {
+            return false;
+        }
+        if (state[ySand+1][xSand] === '.') {
+            ySand = ySand + 1;
+            continue;
+        }
+        if (state[ySand+1][xSand-1] === '.') {
+            ySand = ySand + 1;
+            xSand = xSand - 1;
+            continue;
+        }
+        if (state[ySand+1][xSand+1] === '.') {
+            ySand = ySand + 1;
+            xSand = xSand + 1;
+            continue;
+        }
+        break;
+    }
+
+    if (xSand <= 0 || xSand > (xMax - xMin)) {
+        return false;
+    }
+
+    state[ySand][xSand] = 'o';
+    return true;
+};
+
+const state1 = scan.map((row) => [...row]);
+
+let grains = 0;
+while (true) {
+    const res = dropSand1(state1);
+    if (res) {
+        grains++;
+    } else {
+        break;
+    }
+}
+
+// printMatrix(state, { delimiter: ''})
+console.log(grains);
+
+
+// PART 2
+const dropSand2 = (state) => {
+    let xSand = 500 - xMin + yMax;
+    let ySand = 0;
+
+    if (state[ySand][xSand] === 'o') {
+        return false;
+    }
 
     while (true) {
         if (state[ySand+1][xSand] === '.') {
@@ -68,20 +135,17 @@ const dropSand = (state) => {
         break;
     }
 
-    // console.dir({ xSand, ySand, xMin, xMax })
-    if (ySand > yMax || xSand <= 0 || xSand >= (xMax - xMin)) {
-        return false;
-    }
     state[ySand][xSand] = 'o';
     return true;
 };
 
-const state = scan.map(row => [...row]);
-// printMatrix(state, { delimiter: ''})
+const state2 = scan.map((row) => [...makeArray(yMax), ...row, ...makeArray(yMax)])
+                   .concat([makeArray(xMax-xMin+1+2*yMax), makeArray(xMax-xMin+1+2*yMax, '#')]);
 
-let grains = 0;
+// printMatrix(state2, { delimiter: '' });
+grains = 0;
 while (true) {
-    const res = dropSand(state);
+    const res = dropSand2(state2);
     if (res) {
         grains++;
     } else {
@@ -89,5 +153,4 @@ while (true) {
     }
 }
 
-printMatrix(state, { delimiter: ''})
 console.log(grains);
