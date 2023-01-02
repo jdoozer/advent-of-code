@@ -18,6 +18,7 @@ const { xMin, xMax, yMin, yMax, zMin, zMax } = cubes.reduce((vals, { x, y, z }) 
   return vals;
 }, { xMin: Infinity, xMax: 0, yMin: Infinity, yMax: 0, zMin: Infinity, zMax: 0 });
 
+// PART 1
 const cubeExposedSides = cubes.map(({ x, y, z }) => {
   const xSide1 = x === xMin || !cubes.find(cube => cube.x === x-1 && cube.y === y && cube.z === z);
   const xSide2 = x === xMax || !cubes.find(cube => cube.x === x+1 && cube.y === y && cube.z === z);
@@ -28,4 +29,9 @@ const cubeExposedSides = cubes.map(({ x, y, z }) => {
   return +xSide1 + +xSide2 + +ySide1 + +ySide2 + +zSide1 + +zSide2;
 });
 
-console.log(cubeExposedSides.reduce((total, num) => total + num, 0))
+console.log(cubeExposedSides.reduce((total, num) => total + num, 0));
+
+// PART 2
+cubes.sort(({ x: x1, y: y1, z: z1 }, { x: x2, y: y2, z: z2 }) => (x1 - x2) || (y1 - y2) || (z1 - z2));
+
+console.log(cubes)
